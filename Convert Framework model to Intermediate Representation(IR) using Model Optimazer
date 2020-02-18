@@ -1,0 +1,34 @@
+Convert Tensorflow model to IR
+
+STEP 1 - Downloading the model SSD MobileNet V2 COCO
+wget http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v2_coco_2018_03_29.tar.gz
+STEP 2 - Extract the downloaded model
+tar -xvf ssd_mobilenet_v2_coco_2018_03_29.tar.gz
+STEP 3 - Go to directory where the file was extracted
+cd ssd_mobilenet_v2_coco_2018_03_29
+STEP 4 - Converting the SSD MobileNet V2 model from TensorFlow:
+python /opt/intel/openvino/deployment_tools/model_optimizer/mo.py --input_model frozen_inference_graph.pb 
+--tensorflow_object_detection_api_pipeline_config pipeline.config --reverse_input_channels 
+--tensorflow_use_custom_operations_config /opt/intel/openvino/deployment_tools/model_optimizer/extensions/front/tf/ssd_v2_support.json
+
+***  there are frozen and unfrozen models, the frozen models need TensorFlow-specific parameters like 
+--tensorflow_use_custom_operations_config and --tensorflow_object_detection_api_pipeline_config. 
+Also, --reverse_input_channels is usually needed, as TF model zoo models are trained on RGB images, 
+while OpenCV usually loads as BGR. Certain models, like YOLO, DeepSpeech, and more, have their own separate pages.****
+
+Convert Caffe model to IR
+
+STEP 1 - git clone https://github.com/forresti/SqueezeNet.git
+STEP 2 - Go to directory where the file was cloned
+STEP 3 - python /opt/intel/openvino/deployment_tools/model_optimizer/mo.py 
+         --input_model squeezenet_v1.1.caffemodel --input_proto deploy.prototxt
+         
+Convert ONX model to IR
+
+ONNX does not have any ONNX-specific arguments to the Model Optimizer
+If you are working with PyTorch or Apple ML models, they need to be converted to ONNX format first
+https://docs.openvinotoolkit.org/2018_R5/_docs_MO_DG_prepare_model_convert_model_Convert_Model_From_ONNX.html
+
+STEP 1 - wget https://docs.openvinotoolkit.org/2018_R5/_docs_MO_DG_prepare_model_convert_model_Convert_Model_From_ONNX.html
+STEP 2 - tar -xvf bvlc_alexnet.tar.gz
+STEP 3  go to folder and : python /opt/intel/openvino/deployment_tools/model_optimizer/mo.py --input_model model.onnx
